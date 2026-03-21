@@ -1,6 +1,6 @@
 <template>
   <div class="wraper">
-    <hero-view />
+    <router-view></router-view>
     <footer-component />
   </div>
 </template>
