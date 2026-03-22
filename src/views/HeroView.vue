@@ -47,9 +47,32 @@
                 <div class="row">
                     <div class="col-lg-10 offset-lg-1">
                         <div class="best__wrapper">
+                            <!-- <product-card-component />
                             <product-card-component />
-                            <product-card-component />
-                            <product-card-component />
+                            <product-card-component /> -->
+
+                            <div class="best__item">
+                                <img :src="require(`@/assets/img/${bestsellers[0].img}`)" :alt="bestsellers[0].img">
+                                <div class="best__item-title">
+                                    {{ bestsellers[0].title }}
+                                </div>
+                                <div class="best__item-price">{{ bestsellers[0].price }}</div>
+                            </div>
+                            <div class="best__item">
+                                <img :src="require(`@/assets/img/${bestsellers[1].img}`)" :alt="bestsellers[1].img">
+                                <div class="best__item-title">
+                                    {{ bestsellers[1].title }}
+                                </div>
+                                <div class="best__item-price">{{ bestsellers[1].price }}</div>
+                            </div>
+                            <div class="best__item">
+                                <img :src="require(`@/assets/img/${bestsellers[2].img}`)" :alt="bestsellers[2].img">
+                                <div class="best__item-title">
+                                    {{ bestsellers[2].title }}
+                                </div>
+                                <div class="best__item-price">{{ bestsellers[2].price }}</div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -65,6 +88,29 @@ import ProductCardComponent from '@/components/ProductCardComponent.vue';
 
 export default {
     components: { NavBarComponent, ProductCardComponent },
-
+    data() {
+        return {
+            bestsellers: [
+                {
+                    id: 0,
+                    img: 'coffee-1.jpg',
+                    title: 'Solimo Coffee Beans 2kg',
+                    price: '10.73'
+                },
+                {
+                    id: 1,
+                    img: 'coffee-2.jpg',
+                    title: 'Presto Coffee Beans 1kg',
+                    price: '15.99'
+                },
+                {
+                    id: 2,
+                    img: 'coffee-3.jpg',
+                    title: 'AROMISTICO Coffee 1kg',
+                    price: '6.99'
+                },
+            ],
+        }
+    }
 }
 </script>

@@ -7,7 +7,7 @@
                         <nav-bar-component />
                     </div>
                 </div>
-                <h1 class="title-big">Contact us</h1>
+                <h1 class="title-big">Thank You</h1>
             </div>
         </div>
         <section class="contacts">
@@ -35,9 +35,8 @@
 
 <script>
 import NavBarComponent from '@/components/NavBarComponent.vue';
-import ProductCardComponent from '@/components/ProductCardComponent.vue';
 
 export default {
-    components: { NavBarComponent, ProductCardComponent }
+    components: { NavBarComponent }
 }
 </script>
