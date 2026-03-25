@@ -2,6 +2,7 @@
     <li :class="classLink">
         <router-link :to="link">
             {{ text }}
+            <slot></slot>
         </router-link>
     </li>
 </template>
