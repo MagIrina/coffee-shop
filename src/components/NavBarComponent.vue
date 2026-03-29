@@ -27,33 +27,10 @@ import NavBarItem from "./NavBarItem.vue";
 
 export default {
   components: { NavBarItem },
-  data() {
-    return {
-      links: {
-        header: {
-          id: 0,
-          link: "/",
-          icon: "Logo.svg",
-        },
-        other: [
-          {
-            id: 1,
-            text: "Our coffee",
-            link: "/our-coffee",
-          },
-          {
-            id: 2,
-            text: "For your pleasure",
-            link: "/for-your",
-          },
-          {
-            id: 3,
-            text: "Contact us",
-            link: "/contact",
-          },
-        ],
-      },
-    };
-  },
+  computed: {
+    links() {
+      return this.$store.getters["getHeaderLinks"]
+    }
+  }
 };
 </script>

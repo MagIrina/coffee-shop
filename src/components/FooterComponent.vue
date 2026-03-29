@@ -24,8 +24,8 @@
       </div>
       <img
         class="beanslogo"
-        :src="require(`@/assets/logo/${links.footer_img.icon}`)"
-        :alt="links.footer_img.icon"
+        src="@/assets/logo/Beans_logo_dark.svg"
+        alt="Beans_logo_dark"
       />
     </div>
   </footer>
@@ -33,39 +33,13 @@
 
 <script>
 import NavBarItem from "./NavBarItem.vue";
+
 export default {
   components: { NavBarItem },
-  data() {
-    return {
-      links: {
-        footer: {
-          id: 0,
-          link: "/",
-          icon: "Logo_black.svg",
-        },
-        other: [
-          {
-            id: 1,
-            text: "Our coffee",
-            link: "/our-coffee",
-          },
-          {
-            id: 2,
-            text: "For your pleasure",
-            link: "/for-your",
-          },
-          {
-            id: 3,
-            text: "Contact us",
-            link: "/contact",
-          },
-        ],
-        footer_img: {
-          id: 4,
-          icon: "Beans_logo_dark.svg",
-        },
-      },
-    };
+  computed: {
+    links() {
+      return this.$store.getters["getFooterLinks"]
+    }
   },
 };
 </script>
