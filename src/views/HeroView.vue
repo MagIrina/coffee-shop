@@ -69,9 +69,7 @@
                 v-for="bestseller in bestsellers"
                 :key="bestseller.id"
                 classItem="best__item"
-                :name="bestseller.name"
-                :price="bestseller.price"
-                :image="bestseller.image"
+                :card="bestseller"
               />
             </div>
           </div>
@@ -84,7 +82,6 @@
 <script>
 import NavBarComponent from "@/components/NavBarComponent.vue";
 import ProductCardComponent from "@/components/ProductCardComponent.vue";
-import bestsellers from "@/store/bestsellers";
 import { scrollIntoView } from "seamless-scroll-polyfill";
 
 export default {
