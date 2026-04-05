@@ -1,57 +1,44 @@
-import { v4 as uuidv4 } from "uuid";
 const coffee = {
     state: {
-        coffee: [
-            {
-                id: uuidv4(),
-                image: '',
-                name: 'Presto Coffee Beans 1kg',
-                price: 10.73
-            },
-            {
-                id: uuidv4(),
-                image: '',
-                name: 'Presto Coffee Beans 2kg',
-                price: 15.99
-            },
-            {
-                id: uuidv4(),
-                image: '',
-                name: 'AROMISTICO Coffee 2kg',
-                price: 16.99
-            },
-            {
-                id: uuidv4(),
-                image: '',
-                name: 'Solimo Coffee Beans 2kg',
-                price: 15.73
-            },
-            {
-                id: uuidv4(),
-                image: '',
-                name: 'Presto Coffee Beans 1kg',
-                price: 5.99
-            },
-            {
-                id: uuidv4(),
-                image: '',
-                name: 'AROMISTICO Coffee 1kg',
-                price: 6.99
-            },
-        ],
+        coffee: [],
+        searchValue: '',
+        sortValue: '',
     },
     mutations: {
         setCoffeeData(state, data) {
             state.coffee = data
-        }
+        },
+        setSearchValue(state, value) {
+            state.searchValue = value
+        },
+        setSortValue(state, value) {
+            console.log(value)
+            state.sortValue = value
+        },
     },
     actions: {
         setCoffeeData({ commit }, data) {
-            // console.log(data);  
             commit('setCoffeeData', data)
-        }
+        },
+        setSearchValue({ commit }, value) {
+            commit('setSearchValue', value)
+        },
+        setSortValue({ commit }, value) {
+            commit('setSortValue', value)
+        },
     },
     getters: {
+        // фильтр по стране без использования сервера
+        // getCoffee(state) {
+        //     return state.coffee.filter(item => item.name
+        //         .toLowerCase()
+        //         .includes(state.searchValue.toLowerCase())
+        //     ).filter(item => item.country
+        //         .toLowerCase()
+        //         .includes(state.sortValue.toLowerCase())
+        //     )
+        // },
+        // фильтр по стране с использованием сервера
         getCoffee(state) {
             return state.coffee
         },
@@ -59,7 +46,10 @@ const coffee = {
             return (id) => {
                 return state.coffee.find((card) => card.id === id)
             }
-        }
+        },
+        getSearchValue(state) {
+            return state.searchValue
+        },
     }
 }
 

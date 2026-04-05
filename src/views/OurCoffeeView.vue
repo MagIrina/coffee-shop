@@ -48,21 +48,40 @@
           <div class="col-lg-4 offset-2">
             <form action="#" class="shop__search">
               <label class="shop__search-label" for="filter">Looking for</label>
+              <!-- фильтр input без использования сервера -->
+              <!-- <input
+                id="filter"
+                type="text"
+                placeholder="start typing here..."
+                class="shop__search-input"
+                v-model="searchValue"
+              /> -->
+              <!-- фильтр input с использованием сервера -->
               <input
                 id="filter"
                 type="text"
                 placeholder="start typing here..."
                 class="shop__search-input"
+                v-model="searchValue"
+                @input="onSearch($event)"
               />
             </form>
           </div>
           <div class="col-lg-4">
             <div class="shop__filter">
-              <div class="shop__filter-label">Or filter</div>
+              <div class="shop__filter-label" @click="resetFilter">
+                Or filter
+              </div>
               <div class="shop__filter-group">
-                <button class="shop__filter-btn">Brazil</button>
-                <button class="shop__filter-btn">Kenya</button>
-                <button class="shop__filter-btn">Columbia</button>
+                <button class="shop__filter-btn" @click="onSort('Brazil')">
+                  Brazil
+                </button>
+                <button class="shop__filter-btn" @click="onSort('Kenya')">
+                  Kenya
+                </button>
+                <button class="shop__filter-btn" @click="onSort('Columbia')">
+                  Columbia
+                </button>
               </div>
             </div>
           </div>
@@ -91,6 +110,7 @@ import ProductCardComponent from "@/components/ProductCardComponent.vue";
 import SpinnerComponent from "@/components/SpinnerComponent.vue";
 import { loadingMixin } from "@/mixins/loadingMixin";
 import { navigate } from "@/mixins/navigate";
+import debounce from "debounce";
 
 export default {
   components: { NavBarComponent, ProductCardComponent, SpinnerComponent },
@@ -100,6 +120,14 @@ export default {
     },
     isLoading() {
       return this.$store.getters.getIsLoading;
+    },
+    searchValue: {
+      set(value) {
+        this.$store.dispatch("setSearchValue", value);
+      },
+      get() {
+        return this.$store.getters["getSearchValue"];
+      },
     },
   },
   data() {
@@ -120,6 +148,33 @@ export default {
     } finally {
       this.stopLoading();
     }
+  },
+  // фильтр по стране без использования сервера
+  // methods: {
+  //   onSort(value) {
+  //     this.$store.dispatch("setSortValue", value);
+  //   }
+  // },
+  // фильтр по стране с использованием сервера
+  methods: {
+    onSearch: debounce(function (event) {
+      this.onSort(event.target.value);
+    }, 500),
+    onSort(value) {
+      fetch(`http://localhost:3000/coffee?q=${value}`)
+        .then((res) => res.json())
+        .then((data) => {
+          this.$store.dispatch("setCoffeeData", data);
+        });
+    },
+    resetFilter() {
+      fetch("http://localhost:3000/coffee")
+        .then((res) => res.json())
+        .then((data) => {
+          this.$store.dispatch("setCoffeeData", data);
+          this.$store.dispatch("setSearchValue", "");
+        });
+    },
   },
 };
 </script>
