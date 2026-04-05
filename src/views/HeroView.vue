@@ -59,7 +59,8 @@
         </div>
       </div>
     </section>
-    <section class="best">
+    <spinner-component v-if="isLoading" />
+    <section class="best" v-else>
       <div class="container">
         <div class="title" ref="ourBest">Our best</div>
         <div class="row">
@@ -82,15 +83,26 @@
 <script>
 import NavBarComponent from "@/components/NavBarComponent.vue";
 import ProductCardComponent from "@/components/ProductCardComponent.vue";
+import SpinnerComponent from "@/components/SpinnerComponent.vue";
+import { loadingMixin } from "@/mixins/loadingMixin";
 import { scrollIntoView } from "seamless-scroll-polyfill";
 
 export default {
-  components: { NavBarComponent, ProductCardComponent },
+  components: { NavBarComponent, ProductCardComponent, SpinnerComponent },
   computed: {
     bestsellers() {
-      return this.$store.getters["getBestsellers"]
-    }
+      return this.$store.getters["getBestsellers"];
+    },
+    isLoading() {
+      return this.$store.getters.getIsLoading;
+    },
   },
+  data() {
+    return {
+      name: "bestsellers",
+    };
+  },
+  mixins: [loadingMixin],
   methods: {
     smoothScroll() {
       scrollIntoView(this.$refs.ourBest, {
@@ -98,6 +110,19 @@ export default {
         block: "start",
       });
     },
+  },
+  async mounted() {
+    try {
+      this.startLoading();
+      const res = await fetch("http://localhost:3000/bestsellers");
+      const data = await res.json();
+      this.$store.dispatch("setBestsellersData", data);
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    } catch (e) {
+      console.log(e);
+    } finally {
+      this.stopLoading();
+    }
   },
 };
 </script>

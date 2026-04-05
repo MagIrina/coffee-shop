@@ -11,6 +11,26 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   modules: {
     links, bestsellers, goods, coffee,
+  },
+  
+  state: {
+    isLoading: false
+  },
+
+  getters: {
+    getIsLoading: (state) => state.isLoading
+  },
+
+  mutations: {
+    setLoading(state, value) {
+      state.isLoading = value;
+    }
+  },
+
+  actions: {
+    setLoading({ commit }, value) {
+      commit('setLoading', value);
+    }
   }
 })
 

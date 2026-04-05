@@ -10,7 +10,8 @@
         <h1 class="title-big">Contact us</h1>
       </div>
     </div>
-    <section class="contacts">
+    <spinner-component v-if="isLoading" />
+    <section class="contacts" v-else>
       <div class="container">
         <div class="row">
           <div class="col col-12 col-lg-6 offset-0 offset-lg-3">
@@ -44,9 +45,6 @@
                     {{ error.$message }}
                   </span>
                 </div>
-                <!-- <pre>
-                    {{ v$ }}
-                </pre> -->
               </div>
 
               <div class="form-group row">
@@ -141,10 +139,7 @@
                       <span
                         v-for="error in v$.checkbox.$errors"
                         :key="error.$uid"
-                        style="
-                          color: red;
-                          font-size: 0.8em;
-                        "
+                        style="color: red; font-size: 0.8em"
                       >
                         {{ error.$message }}
                       </span>
@@ -165,6 +160,7 @@
         </div>
       </div>
     </section>
+    <div v-if="showToast" class="toast">Форма отправлена ✅</div>
   </main>
 </template>
 
@@ -176,9 +172,16 @@ import { required, email, maxLength } from "@vuelidate/validators";
 import { helpers } from "@vuelidate/validators";
 import { minLength } from "@/validators/minLength";
 import { isChecked } from "@/validators/isChecked";
+import { loadingMixin } from "@/mixins/loadingMixin";
+import SpinnerComponent from "@/components/SpinnerComponent.vue";
 
 export default {
-  components: { NavBarComponent, ProductCardComponent },
+  components: { NavBarComponent, ProductCardComponent, SpinnerComponent },
+  computed: {
+    isLoading() {
+      return this.$store.getters.getIsLoading;
+    },
+  },
   setup() {
     return { v$: useVuelidate() };
   },
@@ -189,6 +192,7 @@ export default {
       phone: "",
       message: "",
       checkbox: true,
+      showToast: false,
     };
   },
   validations() {
@@ -207,18 +211,45 @@ export default {
       },
     };
   },
+  mixins: [loadingMixin],
   methods: {
     async sumbit() {
       const isFormCorrect = await this.v$.$validate();
       if (!isFormCorrect) return;
 
-      console.log({
+      const message = {
         name: this.name,
         email: this.email,
         phone: this.phone,
         message: this.message,
         checkbox: this.checkbox,
-      });
+      };
+
+      try {
+        this.startLoading();
+
+        await fetch("http://localhost:3000/contacts", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(message),
+        });
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        this.name = "";
+        this.email = "";
+        this.phone = "";
+        this.message = "";
+        this.checkbox = true;
+
+        this.v$.$reset();
+        this.showToast = true;
+        setTimeout(() => {
+          this.showToast = false;
+        }, 3000);
+      } finally {
+        this.stopLoading();
+      }
     },
   },
 };

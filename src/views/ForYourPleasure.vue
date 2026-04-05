@@ -10,7 +10,8 @@
         <h1 class="title-big">For your pleasure</h1>
       </div>
     </div>
-    <section class="shop">
+    <spinner-component v-if="isLoading" />
+    <section class="shop" v-else>
       <div class="container">
         <div class="row">
           <div class="col-lg-4 offset-2">
@@ -53,7 +54,7 @@
                 :key="product.id"
                 classItem="shop__item"
                 :card="product"
-                @onNavigate="navigate" 
+                @onNavigate="navigate"
               />
               <!-- слушатель @onNavigate="navigate" (отслушиваем событие, в данном случаи клика метода навигейт) -->
             </div>
@@ -67,20 +68,38 @@
 <script>
 import NavBarComponent from "@/components/NavBarComponent.vue";
 import ProductCardComponent from "@/components/ProductCardComponent.vue";
+import SpinnerComponent from "@/components/SpinnerComponent.vue";
+import { loadingMixin } from "@/mixins/loadingMixin";
 import { navigate } from "@/mixins/navigate";
 
 export default {
-  components: { NavBarComponent, ProductCardComponent },
+  components: { NavBarComponent, ProductCardComponent, SpinnerComponent },
   computed: {
     goods() {
       return this.$store.getters["getGoods"];
     },
+    isLoading() {
+      return this.$store.getters.getIsLoading;
+    },
   },
   data() {
     return {
-        name: 'goods'
+      name: "goods",
+    };
+  },
+  mixins: [navigate, loadingMixin],
+  async mounted() {
+    try {
+      this.startLoading();
+      const res = await fetch("http://localhost:3000/goods");
+      const data = await res.json();
+      this.$store.dispatch("setGoodsData", data);
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    } catch (e) {
+      console.log(e);
+    } finally {
+      this.stopLoading();
     }
   },
-  mixins: [ navigate ]
 };
 </script>

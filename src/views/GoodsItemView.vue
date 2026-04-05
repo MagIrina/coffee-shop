@@ -10,19 +10,20 @@
             <nav-bar-component />
           </div>
         </div>
-        <h1 class="title-big" v-if="card">{{ card.name }}</h1>
-        <div v-else>Загружаем...</div>
+        <h1 class="title-big" v-if="product">
+          {{ product.name }}
+        </h1>
       </div>
     </div>
-
-    <section class="shop">
+    <spinner-component v-if="isLoading" />
+    <section class="shop" v-if="!isLoading && product">
       <div class="container">
         <div class="row">
           <div class="col-lg-5 offset-1">
             <img
               v-if="card"
               class="shop__girl"
-              :src="require(`@/assets/img/${card.image}`)"
+              :src="product.image"
               alt="coffee_item"
             />
           </div>
@@ -33,22 +34,19 @@
               src="@/assets/logo/Beans_logo_dark.svg"
               alt="Beans logo"
             />
-            <div class="shop__point">
+            <div class="shop__point" v-if="product.country">
               <span>Country:</span>
-              Brazil
+              {{ product.country }}
             </div>
-            <div class="shop__point">
+            <div class="shop__point" v-if="product.description">
               <span>Description:</span>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat.
+              {{ product.description }}
             </div>
             <div class="shop__point">
               <span>Price: </span>
-              <span class="shop__point-price" v-if="card">{{
-                card.price | addCarrency
-              }}</span>
+              <span class="shop__point-price" v-if="card">
+                {{ product.price }}
+              </span>
             </div>
           </div>
         </div>
@@ -59,15 +57,43 @@
 
 <script>
 import NavBarComponent from "@/components/NavBarComponent.vue";
+import SpinnerComponent from "@/components/SpinnerComponent.vue";
+import { loadingMixin } from "@/mixins/loadingMixin";
 
 export default {
-  components: { NavBarComponent },
-  //   filters: { переместили глобально в main.js
-  //     addCarrency(value) {
-  //         return value + '$'
-  //     }
-  //   },
+  components: { NavBarComponent, SpinnerComponent },
+  data() {
+    return {
+      product: null,
+    };
+  },
+  mixins: [loadingMixin],
+
+  async mounted() {
+    try {
+      this.startLoading();
+      const type = this.pageName === "coffee" ? "coffee" : "goods";
+      const res = await fetch(
+        `http://localhost:3000/${type}/${this.$route.params.id}`
+      );
+      const data = await res.json();
+      // делаем задержка, хоть на пол секунды показать, так как загрузка моментальная
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      this.product = data;
+    } catch (e) {
+      console.log(e);
+    } finally {
+      this.stopLoading();
+    }
+  },
+
+  destroyed() {
+    this.product = null;
+  },
   computed: {
+    isLoading() {
+      return this.$store.getters.getIsLoading;
+    },
     pageName() {
       return this.$route.name;
     },
